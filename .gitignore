@@ -1,3 +1,7 @@
+# Output
+.aidoc/
+aidoc.config.json
+
 # Logs
 logs
 *.log

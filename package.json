@@ -1,0 +1,24 @@
+{
+  "name": "aidoc",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "aidoc.js",
+  "dependencies": {
+    "@dqbd/tiktoken": "^1.0.2",
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "hnswlib-node": "^1.4.2",
+    "inquirer": "^9.1.5",
+    "istextorbinary": "^6.0.0",
+    "langchain": "^0.0.48",
+    "minimatch": "^8.0.3",
+    "ora": "^6.3.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Darren Liew",
+  "license": "MIT",
+  "description": ""
+}
