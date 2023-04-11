@@ -24,11 +24,12 @@ function configTemplate(config = {}){
 			'*dist*',
 			'*build*',
 			'*test*',
+			'*.env',
 			'*.svg',
 			'*.md',
 			'*.mdx',
 			'*.toml',
-			'*aidoc*',
+			'aidoc.config.json',
 		],
 		filePrompt:
 			'Write a detailed technical explanation of what this code does. \n\
@@ -173,6 +174,6 @@ export async function index(_root, options){
 	spinnerSuccess()
 	
 	spinnerStart('Create vector files...')
-	await createVectorStore(markdownDir, dataDir)
+	await createVectorStore(markdownDir, dataDir, cfg)
 	spinnerSuccess()
 }

@@ -207,7 +207,7 @@ const processRepository = async (inputRoot, outputRoot, cfg, dryRun) => {
           contentType,
           folderPrompt,
         }),
-        models[CONST.GPT40_08K].llm,
+        models[CONST.GPT35_04K].llm,
       )
 
       const folderSummary = {
@@ -263,11 +263,11 @@ const processRepository = async (inputRoot, outputRoot, cfg, dryRun) => {
    * Create markdown files for each code file and folder in the project
    */
 
-  spinnerStart(`Processing ${folders} folders and ${files} files...`)
+  spinnerStart(`Processing ${files} files...`)
   await traverseFileSystem(inputRoot, Object.assign({
     processFile,
   }, cfg))
-  spinnerSuccess(`Processing ${folders} folders and ${files} files...`)
+  spinnerSuccess(`Processing ${files} files...`)
 
   /**
    * Create markdown summaries for each folder in the project

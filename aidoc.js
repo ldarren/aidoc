@@ -24,6 +24,7 @@ program
   .description('Estimate the cost of running `index` on your respository.')
   .argument('[path]', 'working directory', './')
   .option('-c, --config <char>', 'aidoc config file path', './aidoc.config.json')
+  .option('-l, --limit-rate <rps>', 'rate limit (rps)', 25)
   .action(async (root, options) => {
     await estimate(root, options)
   })
@@ -34,6 +35,7 @@ program
   .description('Traverse your codebase, write docs via LLM, and create a locally stored index.')
   .argument('[path]', 'working directory', './')
   .option('-c, --config <char>', 'aidoc config file path', './aidoc.config.json')
+  .option('-l, --limit-rate <rps>', 'rate limit (rps)', 25)
   .action(async (root, options) => {
     await estimate(root, options)
     const questions = [

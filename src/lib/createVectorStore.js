@@ -1,10 +1,10 @@
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { OpenAIEmbeddings } from 'langchain/embeddings'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import fs from 'node:fs/promises'
 import { Document } from 'langchain/document'
-import { BaseDocumentLoader } from 'langchain/document_loaders'
-import path from 'path'
 import { HNSWLib } from './langchain/hnswlib.js'
+import {models} from './LLMUtil.js'
 
 async function processFile(filePath) {
   const pageContent = await fs.readFile(filePath, 'utf8')
@@ -35,23 +35,12 @@ async function processDirectory(directoryPath) {
   return docs
 }
 
-class RepoLoader extends BaseDocumentLoader {
-	filePath
-  constructor(filePath) {
-	  this.filePath = filePath
-    super()
-  }
-  async load() {
-    return await processDirectory(this.filePath)
-  }
-}
-
-export const createVectorStore = async (inputRoot, outputRoot) => {
-  const loader = new RepoLoader(inputRoot)
-  const rawDocs = await loader.load()
+export const createVectorStore = async (inputRoot, outputRoot, cfg) => {
+  const rawDocs = await processDirectory(inputRoot)
+  const llm = models[cfg.llms[0]]
   /* Split the text into chunks */
   const textSplitter = new RecursiveCharacterTextSplitter({
-    chunkSize: 8000,
+    chunkSize: llm.maxLength,
     chunkOverlap: 100,
   })
   const docs = await textSplitter.splitDocuments(rawDocs)

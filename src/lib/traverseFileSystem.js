@@ -22,13 +22,13 @@ export const traverseFileSystem = async (inputPath, {
       return
     }
 
-    const shouldIgnore = (fileName) => {
-      return ignore.some((pattern) => minimatch(fileName, pattern))
+    const shouldIgnore = (filePath) => {
+      return ignore.some((pattern) => minimatch(filePath, pattern))
     }
 
     const dfs = async (currentPath) => {
       const contents = (await fs.readdir(currentPath)).filter(
-        (fileName) => !shouldIgnore(fileName),
+        (fileName) => !shouldIgnore(path.join(currentPath, fileName)),
       )
 
       await Promise.all(
