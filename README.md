@@ -14,4 +14,5 @@
 - minimatch: file pattern mactching
 - istextorbinary: Determine if a filename and/or buffer is text or binary. 
 - langchain: beat the LLM token limit
-- hnswlib-node: search nearest neighbour:w
+- hnswlib-node: search nearest neighbour
+- marked: convert mark

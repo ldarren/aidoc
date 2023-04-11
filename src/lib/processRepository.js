@@ -35,18 +35,18 @@ const processRepository = async (inputRoot, outputRoot, cfg, dryRun) => {
     linkHosted,
   }) => {
 
-    const content = await fs.readFile(filePath, 'utf-8')
+    const fileContents = await fs.readFile(filePath, 'utf-8')
     const summaryPrompt = createCodeFileSummary({
+      filePath,
       projectName,
-      projectName,
-      content,
+      fileContents,
       contentType,
       filePrompt,
     })
     const questionsPrompt = createCodeQuestions({
+      filePath,
       projectName,
-      projectName,
-      content,
+      fileContents,
       contentType,
       targetAudience,
     })
@@ -73,7 +73,6 @@ const processRepository = async (inputRoot, outputRoot, cfg, dryRun) => {
         return null
       }
     })()
-
     if (!isModel(model)) {
       // console.log(`Skipped ${filePath} | Length ${max}`)
       return
