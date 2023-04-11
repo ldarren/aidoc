@@ -2,7 +2,7 @@
 import { Command } from 'commander'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
-import {init, estimate, index} from './src/cli/index.js'
+import {init, estimate, index, query} from './src/cli/index.js'
 import {spinnerError, spinnerStop} from './src/lib/spinners.js'
 const program = new Command()
 
@@ -30,7 +30,7 @@ program
   })
 
 
-  program
+program
   .command('index')
   .description('Traverse your codebase, write docs via LLM, and create a locally stored index.')
   .argument('[path]', 'working directory', './')
@@ -56,6 +56,15 @@ program
       console.log('Exiting...')
       process.exit(0)
     }
+  })
+
+program
+  .command('q')
+  .description('Query an aidoc index')
+  .argument('[path]', 'working directory', './')
+  .option('-c, --config <char>', 'aidoc config file path', './aidoc.config.json')
+  .action(async (root, config) => {
+      await query(root, config)
   })
 
 /**

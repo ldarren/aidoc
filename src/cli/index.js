@@ -1,12 +1,17 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
+import { OpenAIEmbeddings } from 'langchain/embeddings'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
-import {spinnerStart, spinnerSuccess} from '../lib/spinners.js'
+import {marked} from 'marked'
+import {displayWelcomeMessage, clearScreenAndMoveCursorToTop, getQuestion} from './util.js'
+import { HNSWLib } from '../lib/langchain/hnswlib.js'
+import {spinnerStart, spinnerStop, spinnerSuccess} from '../lib/spinners.js'
 import processRepository from '../lib/processRepository.js'
 import {printModelDetails, totalIndexCostEstimate} from '../lib/LLMUtil.js'
 import {convertJsonToMarkdown} from '../lib/convertJsonToMarkdown.js'
 import {createVectorStore} from '../lib/createVectorStore.js'
+import {makeChain} from '../lib/createChatChain.js'
 import CONST from '../const.js'
 
 function configTemplate(config = {}){
@@ -150,8 +155,8 @@ This is just an estimate. Actual cost may vary.
 It recommended that you set a limit in your OpenAI account to prevent unexpected charges.`))
 }
 
-export async function index(_root, options){
-	const configPath = path.join(_root, options.config)
+export async function index(root, options){
+	const configPath = path.join(root, options.config)
 	const cfg = await readJSON(configPath)
 	const jsonDir = path.join(cfg.output, 'docs', 'json/')
 	const markdownDir = path.join(cfg.output, 'docs', 'markdown/')
@@ -176,4 +181,59 @@ export async function index(_root, options){
 	spinnerStart('Create vector files...')
 	await createVectorStore(markdownDir, dataDir, cfg)
 	spinnerSuccess()
+}
+
+export async function query(root, options){
+	const configPath = path.join(root, options.config)
+	const {
+		name,
+		repositoryUrl,
+		output,
+		llms,
+		contentType,
+		chatPrompt,
+		targetAudience
+	} = await readJSON(configPath)
+
+	const data = path.join(output, 'docs', 'data/')
+	const vectorStore = await HNSWLib.load(data, new OpenAIEmbeddings())
+	const chain = makeChain(
+	  name,
+	  repositoryUrl,
+	  contentType,
+	  chatPrompt,
+	  targetAudience,
+	  vectorStore,
+	  llms,
+	  (token) => {
+		spinnerStop()
+		process.stdout.write(token)
+	  }
+	)
+  
+	clearScreenAndMoveCursorToTop()
+	displayWelcomeMessage(name)
+  
+	let question = await getQuestion(name)
+	const chat_history = []
+  
+	while (question !== 'exit') {
+	  spinnerStart('Thinking...')
+	  try {
+		const { text } = await chain.call({
+		  question,
+		  chat_history,
+		})
+  
+		chat_history.push([question, text])
+  
+		console.log('\n\nMarkdown:\n')
+		console.log(marked(text))
+  
+		question = await getQuestion(name)
+	  } catch (error) {
+		console.log(chalk.red(`Something went wrong: ${error.message}`))
+		question = await getQuestion(name)
+	  }
+	}
 }

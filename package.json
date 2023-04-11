@@ -11,6 +11,7 @@
     "inquirer": "^9.1.5",
     "istextorbinary": "^6.0.0",
     "langchain": "^0.0.48",
+    "marked": "^4.3.0",
     "minimatch": "^8.0.3",
     "ora": "^6.3.0"
   },
