@@ -88,7 +88,7 @@ export const makeChain = (
         handleLLMNewToken: onTokenStream,
         handleLLMStart: () => null,
         handleLLMEnd: () => null,
-		handleLLMError: (...args) => console.error(...args)
+		    handleLLMError: (...args) => console.error(...args)
       },
     }),
     { prompt: QA_PROMPT },
